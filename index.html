@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>UVMS DJ</title>
+<style>
+:root{--bg:#0b0d12;--panel:#151923;--panel2:#1d2330;--line:#2d3443;--text:#f2f5f9;--muted:#9aa5b5;--accent:#7c5cff;--accent2:#2dd4bf;--danger:#ff5b6e}
+*{box-sizing:border-box} body{margin:0;background:linear-gradient(135deg,#090b10,#121624);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);background:#0d1017;position:sticky;top:0;z-index:2}
+.brand{font-size:26px;font-weight:800;letter-spacing:.5px}.brand span{color:var(--accent)}
+.headerBtns{display:flex;gap:8px}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:9px 13px;border-radius:9px;cursor:pointer}.btn:hover{filter:brightness(1.15)}.btn.primary{background:var(--accent);border-color:var(--accent)}.btn.green{background:#0f766e;border-color:#0f766e}
+main{padding:16px;max-width:1500px;margin:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel{background:rgba(21,25,35,.95);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 12px 30px rgba(0,0,0,.2)}
+.deckHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.deckTitle{font-size:20px;font-weight:800}.status{font-size:11px;color:var(--muted)}
+.media{height:180px;border-radius:10px;background:#090b0f;border:1px solid #282f3d;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px}.media video{width:100%;height:100%;object-fit:contain;background:#000}.media .placeholder{color:#697386;text-align:center}
+.fileRow{display:flex;gap:8px;align-items:center}.fileName{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#dce1ea;font-size:13px}
+.controls{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px}.controls .btn{padding:9px 5px}
+.rangeRow{display:grid;grid-template-columns:90px 1fr 50px;gap:10px;align-items:center;margin-top:10px}.rangeRow label{font-size:12px;color:var(--muted)}input[type=range]{width:100%;accent-color:var(--accent)}input[type=number]{background:#0d1118;border:1px solid var(--line);color:var(--text);padding:7px;border-radius:7px;width:70px}
+.small{font-size:11px;color:var(--muted)}
+.bottom{display:grid;grid-template-columns:1.3fr .7fr;gap:14px;margin-top:14px}.library{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:10px}.track{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:9px 10px;border-bottom:1px solid #252b37;font-size:13px}.track:last-child{border-bottom:0}.track button{padding:5px 8px}.track .type{font-size:10px;color:var(--muted)}
+.mixer{display:grid;grid-template-columns:1fr 1fr;gap:12px}.big{font-size:34px;font-weight:800;text-align:center}.cross{margin:10px 0}
+.flags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.chip{background:#10151f;border:1px solid var(--line);border-radius:999px;padding:6px 9px;font-size:11px;color:#b7c0cf}
+footer{text-align:center;padding:15px;color:#667085;font-size:11px}
+kbd{background:#202635;border:1px solid #323b4d;border-bottom-width:2px;padding:1px 5px;border-radius:4px}
+@media(max-width:900px){.grid,.bottom{grid-template-columns:1fr}.controls{grid-template-columns:repeat(3,1fr)}}
+
+.searchPanel{margin-top:14px}.searchRow{display:flex;gap:8px}.searchRow input{flex:1;background:#0d1118;border:1px solid var(--line);color:var(--text);padding:10px;border-radius:8px}.results{margin-top:10px;display:grid;gap:7px;max-height:260px;overflow:auto}.result{display:grid;grid-template-columns:120px 1fr auto;gap:10px;align-items:center;padding:8px;background:#10151f;border:1px solid var(--line);border-radius:8px}.result img{width:120px;height:68px;object-fit:cover;border-radius:6px}.resultTitle{font-size:13px;font-weight:700}.resultMeta{font-size:10px;color:var(--muted)}.searchNote{font-size:11px;color:var(--muted);margin-top:7px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">🎧 UVMS <span>DJ</span></div>
+  <div class="headerBtns">
+    <button class="btn" id="openFiles">＋ Add Music / Clips</button><button class="btn" id="googleDirect">🔎 Google</button>
+    <button class="btn green" id="autoBtn">▶ Auto DJ</button>
+    <button class="btn" id="fullBtn">⛶ Fullscreen</button>
+  </div>
+</header>
+<main>
+  <div class="grid">
+    <section class="panel">
+      <div class="deckHead"><div class="deckTitle">DECK A</div><div class="status" id="statusA">READY</div></div>
+      <div class="media" id="mediaA"><div class="placeholder">Load a song or video clip</div></div>
+      <div class="fileRow"><button class="btn primary" id="loadA">Load A</button><div class="fileName" id="nameA">No file loaded</div></div>
+      <div class="controls">
+        <button class="btn" id="playA">▶ PLAY</button><button class="btn" id="pauseA">⏸ PAUSE</button><button class="btn" id="cueA">CUE</button><button class="btn" id="loopA">LOOP</button><button class="btn" id="resetA">RESET</button>
+      </div>
+      <div class="rangeRow"><label>Volume</label><input id="volA" type="range" min="0" max="100" value="100"><span id="volATxt">100%</span></div>
+      <div class="rangeRow"><label>BPM</label><input id="bpmA" type="number" min="40" max="240" value="120"><span class="small">manual</span></div>
+      <div class="rangeRow"><label>Filter</label><input id="filterA" type="range" min="-10" max="10" value="0"><span id="filterATxt">0</span></div>
+      <div class="flags"><span class="chip">Hot Cue: <kbd>A</kbd></span><span class="chip">Play/Pause: <kbd>Space</kbd></span><span class="chip">Sync: <kbd>S</kbd></span></div>
+    </section>
+
+    <section class="panel">
+      <div class="deckHead"><div class="deckTitle">DECK B</div><div class="status" id="statusB">READY</div></div>
+      <div class="media" id="mediaB"><div class="placeholder">Load a song or video clip</div></div>
+      <div class="fileRow"><button class="btn primary" id="loadB">Load B</button><div class="fileName" id="nameB">No file loaded</div></div>
+      <div class="controls">
+        <button class="btn" id="playB">▶ PLAY</button><button class="btn" id="pauseB">⏸ PAUSE</button><button class="btn" id="cueB">CUE</button><button class="btn" id="loopB">LOOP</button><button class="btn" id="resetB">RESET</button>
+      </div>
+      <div class="rangeRow"><label>Volume</label><input id="volB" type="range" min="0" max="100" value="100"><span id="volBTxt">100%</span></div>
+      <div class="rangeRow"><label>BPM</label><input id="bpmB" type="number" min="40" max="240" value="120"><span class="small">manual</span></div>
+      <div class="rangeRow"><label>Filter</label><input id="filterB" type="range" min="-10" max="10" value="0"><span id="filterBTxt">0</span></div>
+      <div class="flags"><span class="chip">Hot Cue: <kbd>L</kbd></span><span class="chip">Beat loop: 4 bars</span><span class="chip">Video clip ready</span></div>
+    </section>
+  </div>
+
+
+  <section class="panel searchPanel">
+    <div class="deckHead"><div class="deckTitle">🎵 SPOTIFY DJ PLAYER</div><div class="status" id="spotifyStatus">NOT CONNECTED</div></div>
+    <div class="searchRow">
+      <input id="spotifyClientId" placeholder="Spotify Client ID (one-time setup)" autocomplete="off">
+      <button class="btn green" id="spotifyConnect">🔐 Connect Spotify</button>
+      <button class="btn" id="spotifyLogout">Logout</button>
+    </div>
+    <div class="searchRow" style="margin-top:8px">
+      <input id="spotifySearch" placeholder="Search Spotify song or artist..." autocomplete="off">
+      <button class="btn primary" id="spotifySearchBtn">🔎 Search Spotify</button>
+    </div>
+    <div class="results" id="spotifyResults"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+      <button class="btn" id="spotifyPrev">⏮ Previous</button>
+      <button class="btn primary" id="spotifyPlay">▶ Play / Pause</button>
+      <button class="btn" id="spotifyNext">⏭ Next</button>
+      <button class="btn" id="spotifyShuffle">🔀 Shuffle</button>
+      <button class="btn" id="spotifyRepeat">🔁 Repeat</button>
+    </div>
+    <div class="rangeRow"><label>Spotify Volume</label><input id="spotifyVol" type="range" min="0" max="100" value="80"><span id="spotifyVolTxt">80%</span></div>
+    <div class="small" id="spotifyNowPlaying" style="margin-top:8px">No Spotify track playing</div>
+    <div class="searchNote">Official Spotify Web Playback SDK. Full in-browser playback requires Spotify Premium and a registered Spotify Developer app. Use UVMS DJ over HTTP/HTTPS, not file://.</div>
+  </section>
+
+  <div class="bottom">
+    <section class="panel">
+      <div class="deckHead"><div class="deckTitle">🎚️ MASTER MIXER</div><div class="status" id="mixStatus">Crossfade A ↔ B</div></div>
+      <div class="mixer">
+        <div><div class="big" id="aPct">50%</div><div class="small" style="text-align:center">A</div></div>
+        <div><div class="big" id="bPct">50%</div><div class="small" style="text-align:center">B</div></div>
+      </div>
+      <div class="cross"><input id="cross" type="range" min="0" max="100" value="50"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="sync">🔄 SYNC</button>
+        <button class="btn" id="swap">⇄ SWAP</button>
+        <button class="btn" id="stopAll">⏹ STOP ALL</button>
+        <button class="btn" id="demo">▶ DEMO TRANSITION</button>
+      </div>
+      <p class="small">SYNC matches Deck B's playback speed to Deck A using the BPM values you enter.</p>
+    </section>
+
+    <section class="panel">
+      <div class="deckHead"><div class="deckTitle">📚 MEDIA LIBRARY</div><div class="status">Local files only</div></div>
+      <div class="library" id="library"></div>
+      <div style="margin-top:9px"><button class="btn" id="clearLib">Clear Library</button></div>
+    </section>
+  </div>
+</main>
+<footer>UVMS DJ • Spotify Web Playback + Local DJ • Use only media you have permission to use</footer>
+
+<input id="filePicker" type="file" accept="audio/*,video/*" multiple hidden>
+
+<script>const decks={
+ A:{el:null,url:null,file:null,loop:false,cue:0,ctx:null,source:null,filter:null},
+ B:{el:null,url:null,file:null,loop:false,cue:0,ctx:null,source:null,filter:null}
+};
+const $=id=>document.getElementById(id);
+function makeMedia(key,file){
+  const d=decks[key], wrap=$("media"+key);
+  if(d.el){d.el.pause(); if(d.url)URL.revokeObjectURL(d.url)}
+  d.file=file; d.url=URL.createObjectURL(file);
+  const isVideo=file.type.startsWith("video/");
+  const el=document.createElement(isVideo?"video":"audio");
+  el.src=d.url; el.preload="auto"; el.controls=false; el.playsInline=true;
+  if(isVideo){el.autoplay=false; wrap.innerHTML=""; wrap.appendChild(el);}
+  else {wrap.innerHTML='<div class="placeholder">🎵 '+escapeHtml(file.name)+'</div>';}
+  d.el=el; d.cue=0;
+  $("name"+key).textContent=file.name;
+  $("status"+key).textContent=isVideo?"VIDEO READY":"AUDIO READY";
+  $("filter"+key).value=0; $("filter"+key+"Txt").textContent="0";
+  wireAudio(key);
+}
+function wireAudio(key){
+  const d=decks[key];
+  try{
+    if(!d.ctx){
+      d.ctx=new (window.AudioContext||window.webkitAudioContext)();
+      d.source=d.ctx.createMediaElementSource(d.el);
+      d.filter=d.ctx.createBiquadFilter();
+      d.filter.type="lowpass"; d.filter.frequency.value=20000;
+      d.source.connect(d.filter).connect(d.ctx.destination);
+    }
+  }catch(e){ /* browser may handle output without effects */ }
+  d.el.addEventListener("timeupdate",()=>{
+    if(d.loop && d.el.currentTime>=d.loopEnd){d.el.currentTime=d.loopStart;d.el.play();}
+  });
+  d.el.addEventListener("ended",()=>{$("status"+key).textContent="ENDED";});
+}
+async function play(key){const d=decks[key];if(!d.el){alert("Load a file on Deck "+key+" first.");return;}try{if(d.ctx&&d.ctx.state==="suspended")await d.ctx.resume();await d.el.play();$("status"+key).textContent="PLAYING";}catch(e){alert("Browser blocked playback. Click PLAY again.");}}
+function pause(key){const d=decks[key];if(d.el){d.el.pause();$("status"+key).textContent="PAUSED";}}
+
+function setFilter(key){
+  const v=+$("filter"+key).value; $("filter"+key+"Txt").textContent=v;
+  if(decks[key].filter){decks[key].filter.frequency.value=v===0?20000:(v>0?2000+v*1800:500+Math.max(0,v+10)*100);}
+}
+function sync(){const a=+$('bpmA').value,b=+$('bpmB').value;if(!decks.B.el)return;const rate=Math.max(.5,Math.min(2,a/b));decks.B.el.playbackRate=rate;$('mixStatus').textContent="SYNC: B rate "+rate.toFixed(2)+"x";}
+
+function swap(){const af=decks.A.file,bf=decks.B.file;if(!af||!bf)return;makeMedia("A",bf);makeMedia("B",af);}
+function stopAll(){pause("A");pause("B");}
+async function demo(){if(!decks.B.el){alert("Load a file on Deck B first.");return;}await play("B");$('cross').value=0;applyMix();let x=0;const t=setInterval(()=>{x+=2;$('cross').value=x;applyMix();if(x>=100)clearInterval(t)},100);}
+function openPicker(target){
+  $("filePicker").onchange=()=>{const files=[...$("filePicker").files];files.forEach(addLibrary);if(files[0])makeMedia(target,files[0]);$("filePicker").value="";};
+  $("filePicker").click();
+}
+function addLibrary(file){
+  const box=$("library"); const row=document.createElement("div");row.className="track";
+  const name=document.createElement("div");name.textContent=file.name; const type=document.createElement("div");type.className="type";type.textContent=file.type.startsWith("video/")?"VIDEO":"AUDIO";
+  const a=document.createElement("button");a.className="btn";a.textContent="A";a.onclick=()=>makeMedia("A",file);
+  const b=document.createElement("button");b.className="btn";b.textContent="B";b.onclick=()=>makeMedia("B",file);
+  row.append(name,type,a,b);box.appendChild(row);
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;" }[m]));}
+
+$("loadA").onclick=()=>openPicker("A"); $("loadB").onclick=()=>openPicker("B"); $("openFiles").onclick=()=>openPicker("A");
+$("playA").onclick=()=>play("A"); $("playB").onclick=()=>play("B"); $("pauseA").onclick=()=>pause("A"); $("pauseB").onclick=()=>pause("B");
+$("cueA").onclick=()=>cue("A");$("cueB").onclick=()=>cue("B");$("loopA").onclick=()=>toggleLoop("A");$("loopB").onclick=()=>toggleLoop("B");
+$("resetA").onclick=()=>reset("A");$("resetB").onclick=()=>reset("B");$("cross").oninput=applyMix;
+$("volA").oninput=()=>setVolume("A");$("volB").oninput=()=>setVolume("B");$("filterA").oninput=()=>setFilter("A");$("filterB").oninput=()=>setFilter("B");
+$("sync").onclick=sync;$("swap").onclick=swap;$("stopAll").onclick=stopAll;$("demo").onclick=demo;
+$("clearLib").onclick=()=>{$("library").innerHTML=""};
+$("autoBtn").onclick=()=>{if(!decks.A.el&&!decks.B.el){alert("Load files on A and B first.");return;} $("autoBtn").textContent="✓ Auto DJ Ready"; $("mixStatus").textContent="Auto DJ ready — use DEMO TRANSITION";};
+$("fullBtn").onclick=()=>document.documentElement.requestFullscreen?.();
+
+$('spotifyConnect').onclick=spotifyConnect;$('spotifyLogout').onclick=spotifyLogout;$('spotifySearchBtn').onclick=searchSpotify;$('spotifySearch').addEventListener('keydown',e=>{if(e.key==='Enter')searchSpotify()});$('spotifyPlay').onclick=spotifyToggle;$('spotifyNext').onclick=spotifyNext;$('spotifyPrev').onclick=spotifyPrev;$('spotifyShuffle').onclick=spotifyShuffle;$('spotifyRepeat').onclick=spotifyRepeat;$('spotifyVol').oninput=spotifyVolume;$('spotifyClientId').value=localStorage.getItem('uvms_spotify_client_id')||'';spotifyHandleCallback().then(()=>{if(!spotifyToken&&localStorage.getItem('uvms_spotify_refresh_token'))startSpotifyPlayer()});
+document.addEventListener("keydown",e=>{
+ if(e.code==="Space"){e.preventDefault(); const d=decks.A.el?.paused? "A":"B"; play(d);}
+ if(e.key.toLowerCase()==="a")cue("A");
+ if(e.key.toLowerCase()==="l")cue("B");
+ if(e.key.toLowerCase()==="s")sync();
+});
+</script>
+
+</body>
+</html>
