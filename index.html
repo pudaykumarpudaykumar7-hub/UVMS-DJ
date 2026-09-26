@@ -4,7 +4,30 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>UVMS DJ</title>
+<title>UVMS DJ PRO — Online Music & DJ Player</title>
+<meta name="description" content="UVMS DJ is a browser-based DJ music player with dual decks, local media playback, online music search, mixing controls, crossfader, BPM, sync and fullscreen DJ controls.">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<link rel="canonical" href="https://pudykumarpudykumar7-hub.github.io/UVMS-DJ/">
+<meta name="theme-color" content="#070711">
+<meta property="og:type" content="website">
+<meta property="og:title" content="UVMS DJ PRO — Online Music & DJ Player">
+<meta property="og:description" content="A browser-based DJ player with dual decks, music search, local media playback and mixing controls.">
+<meta property="og:url" content="https://pudykumarpudykumar7-hub.github.io/UVMS-DJ/">
+<meta property="og:site_name" content="UVMS DJ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UVMS DJ PRO — Online Music & DJ Player">
+<meta name="twitter:description" content="Browser-based dual-deck DJ player for music search, local media playback and mixing.">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"UVMS DJ PRO",
+  "url":"https://pudykumarpudykumar7-hub.github.io/UVMS-DJ/",
+  "applicationCategory":"MultimediaApplication",
+  "operatingSystem":"Web Browser",
+  "description":"Browser-based DJ music player with dual decks, local media playback, online music search and mixing controls."
+}
+</script>
 <style>
 :root{--bg:#0b0d12;--panel:#151923;--panel2:#1d2330;--line:#2d3443;--text:#f2f5f9;--muted:#9aa5b5;--accent:#7c5cff;--accent2:#2dd4bf;--danger:#ff5b6e}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(135deg,#090b10,#121624);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
@@ -26,6 +49,20 @@ kbd{background:#202635;border:1px solid #323b4d;border-bottom-width:2px;padding:
 @media(max-width:900px){.grid,.bottom{grid-template-columns:1fr}.controls{grid-template-columns:repeat(3,1fr)}}
 
 .searchPanel{margin-top:14px}.searchRow{display:flex;gap:8px}.searchRow input{flex:1;background:#0d1118;border:1px solid var(--line);color:var(--text);padding:10px;border-radius:8px}.results{margin-top:10px;display:grid;gap:7px;max-height:260px;overflow:auto}.result{display:grid;grid-template-columns:120px 1fr auto;gap:10px;align-items:center;padding:8px;background:#10151f;border:1px solid var(--line);border-radius:8px}.result img{width:120px;height:68px;object-fit:cover;border-radius:6px}.resultTitle{font-size:13px;font-weight:700}.resultMeta{font-size:10px;color:var(--muted)}.searchNote{font-size:11px;color:var(--muted);margin-top:7px}
+
+.resultArt{width:120px;height:68px;display:grid;place-items:center;background:linear-gradient(135deg,#00d4ff,#7c3aed);border-radius:6px;font-size:30px}.searchPanel{overflow:hidden}.searchPanel input,.searchPanel select{min-height:40px}.searchPanel input{flex:1}.btn.primary{color:#fff}.searchNote{line-height:1.5}
+</style>
+
+<style id="uvms-new-theme">
+:root{--uvms-bg:#070711;--uvms-panel:#111225;--uvms-panel2:#171936;--uvms-accent:#00e5ff;--uvms-accent2:#a855f7;--uvms-text:#f7f7ff;--uvms-muted:#9da3c7}
+body{background:radial-gradient(circle at 15% 0%,#16204b 0%,#080914 38%,#05050b 100%)!important;color:var(--uvms-text)!important}
+header,.topbar,.panel,.deck,.mixer,.library,.search-panel{background:linear-gradient(145deg,rgba(21,24,52,.96),rgba(10,11,27,.96))!important;border:1px solid rgba(0,229,255,.18)!important;box-shadow:0 12px 45px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.04)!important}
+button,.btn{border:1px solid rgba(0,229,255,.25)!important;background:linear-gradient(135deg,#171a3b,#242052)!important;color:#fff!important;border-radius:10px!important;transition:.18s}
+button:hover,.btn:hover{transform:translateY(-1px);border-color:#00e5ff!important;box-shadow:0 0 22px rgba(0,229,255,.18)}
+input,select{background:#080a18!important;color:#fff!important;border:1px solid #30355f!important}
+.logo,.brand,h1,h2,h3{color:#fff!important;text-shadow:0 0 20px rgba(0,229,255,.18)}
+.accent,.active,.playing{color:#00e5ff!important}
+.search-results button{background:linear-gradient(135deg,#00a7c4,#7c3aed)!important}
 </style>
 </head>
 <body>
@@ -67,29 +104,19 @@ kbd{background:#202635;border:1px solid #323b4d;border-bottom-width:2px;padding:
   </div>
 
 
-  <section class="panel searchPanel">
-    <div class="deckHead"><div class="deckTitle">🎵 SPOTIFY DJ PLAYER</div><div class="status" id="spotifyStatus">NOT CONNECTED</div></div>
-    <div class="searchRow">
-      <input id="spotifyClientId" placeholder="Spotify Client ID (one-time setup)" autocomplete="off">
-      <button class="btn green" id="spotifyConnect">🔐 Connect Spotify</button>
-      <button class="btn" id="spotifyLogout">Logout</button>
-    </div>
-    <div class="searchRow" style="margin-top:8px">
-      <input id="spotifySearch" placeholder="Search Spotify song or artist..." autocomplete="off">
-      <button class="btn primary" id="spotifySearchBtn">🔎 Search Spotify</button>
-    </div>
-    <div class="results" id="spotifyResults"></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-      <button class="btn" id="spotifyPrev">⏮ Previous</button>
-      <button class="btn primary" id="spotifyPlay">▶ Play / Pause</button>
-      <button class="btn" id="spotifyNext">⏭ Next</button>
-      <button class="btn" id="spotifyShuffle">🔀 Shuffle</button>
-      <button class="btn" id="spotifyRepeat">🔁 Repeat</button>
-    </div>
-    <div class="rangeRow"><label>Spotify Volume</label><input id="spotifyVol" type="range" min="0" max="100" value="80"><span id="spotifyVolTxt">80%</span></div>
-    <div class="small" id="spotifyNowPlaying" style="margin-top:8px">No Spotify track playing</div>
-    <div class="searchNote">Official Spotify Web Playback SDK. Full in-browser playback requires Spotify Premium and a registered Spotify Developer app. Use UVMS DJ over HTTP/HTTPS, not file://.</div>
-  </section>
+  <section class="panel searchPanel" id="onlineSearchPanel">
+  <div class="deckHead"><div class="deckTitle">🔎 UVMS MUSIC SEARCH</div><div class="status" id="onlineStatus">Ready</div></div>
+  <div class="searchRow">
+    <input id="musicSearch" type="search" placeholder="Search music available for browser streaming…" autocomplete="off">
+    <button class="btn primary" id="musicSearchBtn">SEARCH</button>
+  </div>
+  <div class="searchRow" style="margin-top:8px">
+    <select id="deckTarget" class="btn"><option value="A">Load to Deck A</option><option value="B">Load to Deck B</option></select>
+    <button class="btn" id="stopOnline">⏹ STOP</button>
+  </div>
+  <div class="results" id="musicResults"></div>
+  <div class="searchNote">Powered by Audius' open music catalog. Only tracks that the catalog permits for third-party streaming can play here.</div>
+</section>
 
   <div class="bottom">
     <section class="panel">
@@ -115,7 +142,6 @@ kbd{background:#202635;border:1px solid #323b4d;border-bottom-width:2px;padding:
     </section>
   </div>
 </main>
-<footer>UVMS DJ • Spotify Web Playback + Local DJ • Use only media you have permission to use</footer>
 
 <input id="filePicker" type="file" accept="audio/*,video/*" multiple hidden>
 
@@ -190,7 +216,72 @@ $("clearLib").onclick=()=>{$("library").innerHTML=""};
 $("autoBtn").onclick=()=>{if(!decks.A.el&&!decks.B.el){alert("Load files on A and B first.");return;} $("autoBtn").textContent="✓ Auto DJ Ready"; $("mixStatus").textContent="Auto DJ ready — use DEMO TRANSITION";};
 $("fullBtn").onclick=()=>document.documentElement.requestFullscreen?.();
 
-$('spotifyConnect').onclick=spotifyConnect;$('spotifyLogout').onclick=spotifyLogout;$('spotifySearchBtn').onclick=searchSpotify;$('spotifySearch').addEventListener('keydown',e=>{if(e.key==='Enter')searchSpotify()});$('spotifyPlay').onclick=spotifyToggle;$('spotifyNext').onclick=spotifyNext;$('spotifyPrev').onclick=spotifyPrev;$('spotifyShuffle').onclick=spotifyShuffle;$('spotifyRepeat').onclick=spotifyRepeat;$('spotifyVol').oninput=spotifyVolume;$('spotifyClientId').value=localStorage.getItem('uvms_spotify_client_id')||'';spotifyHandleCallback().then(()=>{if(!spotifyToken&&localStorage.getItem('uvms_spotify_refresh_token'))startSpotifyPlayer()});
+const $m = id => document.getElementById(id);
+let onlineTracks = [];
+let onlineIndex = -1;
+
+function setOnlineStatus(msg, error=false){
+  const el=$m('onlineStatus'); if(el){el.textContent=msg; el.style.color=error?'#ff6b8a':'';}
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+async function searchOnline(){
+  const q=$m('musicSearch').value.trim();
+  if(!q){setOnlineStatus('Type a song or artist'); return;}
+  setOnlineStatus('Searching…');
+  const box=$m('musicResults'); box.innerHTML='<div class="searchNote">Searching Audius…</div>';
+  try{
+    const url='https://api.audius.co/v1/tracks/search?query='+encodeURIComponent(q)+'&limit=20&app_name=UVMSDJ';
+    const res=await fetch(url,{headers:{Accept:'application/json'}});
+    if(!res.ok) throw new Error('Search HTTP '+res.status);
+    const json=await res.json();
+    onlineTracks=(json.data||[]).filter(t=>t && t.id && t.is_unlisted!==true && t.is_stream_gated!==true);
+    box.innerHTML='';
+    if(!onlineTracks.length){box.innerHTML='<div class="searchNote">No browser-streamable tracks found.</div>';setOnlineStatus('No results');return;}
+    onlineTracks.forEach((t,i)=>{
+      const art=t.artwork?.['150x150']||t.artwork?.['1000x1000']||'';
+      const row=document.createElement('div'); row.className='result';
+      row.innerHTML=`${art?`<img src="${esc(art)}" alt="">`:'<div class="resultArt">♪</div>'}<div><div class="resultTitle">${esc(t.title)}</div><div class="resultMeta">${esc(t.user?.name||'Unknown artist')} • ${Math.round(t.duration||0)}s</div></div><div style="display:flex;gap:6px"><button class="btn" data-preview="${i}">▶ PLAY</button><button class="btn primary" data-load="${i}">A/B</button></div>`;
+      row.querySelector('[data-preview]').onclick=()=>playOnline(i,$m('deckTarget').value);
+      row.querySelector('[data-load]').onclick=()=>playOnline(i,$m('deckTarget').value);
+      box.appendChild(row);
+    });
+    setOnlineStatus(onlineTracks.length+' results');
+  }catch(e){console.error(e);box.innerHTML='<div class="searchNote">Music search failed. Check your internet connection and try again.</div>';setOnlineStatus('Search error',true);}
+}
+async function playOnline(index,target){
+  const t=onlineTracks[index]; if(!t)return;
+  onlineIndex=index; setOnlineStatus('Loading '+t.title+'…');
+  try{
+    // Official Audius stream endpoint; browser audio stays inside UVMS DJ.
+    const stream='https://api.audius.co/v1/tracks/'+encodeURIComponent(t.id)+'/stream?app_name=UVMSDJ';
+    const response=await fetch(stream,{redirect:'follow'});
+    if(!response.ok) throw new Error('Stream HTTP '+response.status);
+    const finalUrl=response.url;
+    const media={name:(t.title||'Audius Track')+' — '+(t.user?.name||'')+'.mp3', type:'audio/mpeg', url:finalUrl, online:true, title:t.title, artist:t.user?.name||'Audius'};
+    makeMediaFromURL(target,media);
+    await play(target);
+    setOnlineStatus('PLAYING • Deck '+target);
+  }catch(e){
+    console.error(e); setOnlineStatus('This track cannot be streamed in this browser',true);
+    alert('UVMS DJ could not start this track. Try another search result.');
+  }
+}
+function makeMediaFromURL(key,m){
+  const d=decks[key];
+  if(d.el){try{d.el.pause();}catch(e){}}
+  if(d.url)URL.revokeObjectURL?.(d.url);
+  const el=document.createElement('audio'); el.preload='auto'; el.crossOrigin='anonymous'; el.src=m.url; el.volume=+$m('vol'+key).value/100;
+  d.el=el; d.file=null; d.url=m.url; d.loop=false; d.loopStart=0; d.loopEnd=0;
+  el.addEventListener('error',()=>{$m('status'+key).textContent='STREAM ERROR';setOnlineStatus('Stream failed — choose another track',true);});
+  el.addEventListener('ended',()=>{$m('status'+key).textContent='ENDED';});
+  $m('name'+key).textContent=m.title+(m.artist?' • '+m.artist:'');
+  $m('status'+key).textContent='READY';
+  applyMix();
+}
+$m('musicSearchBtn').onclick=searchOnline;
+$m('musicSearch').addEventListener('keydown',e=>{if(e.key==='Enter')searchOnline();});
+$m('stopOnline').onclick=()=>{pause('A');pause('B');setOnlineStatus('Stopped');};
+
 document.addEventListener("keydown",e=>{
  if(e.code==="Space"){e.preventDefault(); const d=decks.A.el?.paused? "A":"B"; play(d);}
  if(e.key.toLowerCase()==="a")cue("A");
